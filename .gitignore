@@ -3,6 +3,9 @@ backend/desafio-fullstack-veritas
 backend/desafio-fullstack-veritas.exe
 backend/*.exe
 
+# Dados de runtime (persistencia local)
+backend/tasks.json
+
 # OS
 .DS_Store
 Thumbs.db

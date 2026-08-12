@@ -1,12 +1,16 @@
 package store
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
 	"strconv"
 	"sync"
 
 	"desafio-fullstack-veritas/models"
 )
+
+const dataFile = "tasks.json"
 
 // TaskStore mantém as tasks em memória, protegidas por um RWMutex
 // para permitir leituras concorrentes sem bloquear escritas.
@@ -16,11 +20,51 @@ type TaskStore struct {
 	nextID int
 }
 
-// NewTaskStore cria um TaskStore vazio, pronto para uso.
+// NewTaskStore cria um TaskStore e carrega o estado salvo em tasks.json, se existir.
 func NewTaskStore() *TaskStore {
-	return &TaskStore{
+	s := &TaskStore{
 		tasks: make(map[string]models.Task),
 	}
+	s.load()
+	return s
+}
+
+// load lê tasks.json e popula o mapa em memória. Se o arquivo não existir
+// ou estiver corrompido, o store simplesmente começa vazio.
+func (s *TaskStore) load() {
+	data, err := os.ReadFile(dataFile)
+	if err != nil {
+		return
+	}
+
+	var tasks []models.Task
+	if err := json.Unmarshal(data, &tasks); err != nil {
+		return
+	}
+
+	for _, t := range tasks {
+		s.tasks[t.ID] = t
+		if id, err := strconv.Atoi(t.ID); err == nil && id > s.nextID {
+			s.nextID = id
+		}
+	}
+}
+
+// save grava o estado atual em tasks.json. Só pode ser chamado por métodos
+// que já detêm o lock de escrita (s.mu.Lock) — chamar s.mu.Lock() de novo
+// aqui causaria deadlock, já que sync.Mutex não é reentrante.
+func (s *TaskStore) save() {
+	tasks := make([]models.Task, 0, len(s.tasks))
+	for _, t := range s.tasks {
+		tasks = append(tasks, t)
+	}
+
+	data, err := json.MarshalIndent(tasks, "", "  ")
+	if err != nil {
+		return
+	}
+
+	os.WriteFile(dataFile, data, 0644)
 }
 
 // GetAllTasks retorna todas as tasks. Usa RLock porque é uma operação
@@ -49,6 +93,7 @@ func (s *TaskStore) Create(title, description, status string) models.Task {
 		Status:      status,
 	}
 	s.tasks[id] = task
+	s.save()
 	return task
 }
 
@@ -68,6 +113,7 @@ func (s *TaskStore) Update(id, title, description, status string) (models.Task, 
 	task.Description = description
 	task.Status = status
 	s.tasks[id] = task
+	s.save()
 	return task, nil
 }
 
@@ -81,5 +127,6 @@ func (s *TaskStore) Delete(id string) error {
 	}
 
 	delete(s.tasks, id)
+	s.save()
 	return nil
 }
