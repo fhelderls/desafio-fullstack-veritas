@@ -1,0 +1,24 @@
+flowchart TD
+    A[Usuário abre o app] --> B{Backend respondeu?}
+    B -- Não --> C[Exibe mensagem de erro]
+    B -- Sim --> D[Exibe 3 colunas: A Fazer / Em Progresso / Concluídas]
+
+    D --> E[Clica + Nova Tarefa]
+    E --> F[Preenche título, descrição e status]
+    F --> G{Título vazio?}
+    G -- Sim --> F
+    G -- Não --> H[POST /tasks]
+    H --> D
+
+    D --> I[Clica Editar em um card]
+    I --> J[Altera dados no modal]
+    J --> K[PUT /tasks/:id]
+    K --> D
+
+    D --> L[Move card: seta ou drag-and-drop]
+    L --> M[PUT /tasks/:id com novo status]
+    M --> D
+
+    D --> N[Clica Excluir]
+    N --> O[DELETE /tasks/:id]
+    O --> D
