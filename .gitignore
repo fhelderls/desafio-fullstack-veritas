@@ -1,0 +1,8 @@
+# Go build output
+backend/desafio-fullstack-veritas
+backend/desafio-fullstack-veritas.exe
+backend/*.exe
+
+# OS
+.DS_Store
+Thumbs.db
