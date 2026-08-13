@@ -6,13 +6,13 @@ import { TaskCard } from "./TaskCard";
 interface ColumnProps {
   status: TaskStatus;
   tasks: Task[];
-  onEdit: (task: Task) => void;
-  onDelete: (id: string) => void;
-  onMove: (task: Task, newStatus: TaskStatus) => void;
+  onOpen: (task: Task) => void;
   onDropTask: (taskId: string, newStatus: TaskStatus) => void;
 }
 
-export function Column({ status, tasks, onEdit, onDelete, onMove, onDropTask }: ColumnProps) {
+
+export function Column({ status, tasks, onOpen, onDropTask }: ColumnProps) {
+
   const [isDragOver, setIsDragOver] = useState(false);
 
   return (
@@ -34,15 +34,10 @@ export function Column({ status, tasks, onEdit, onDelete, onMove, onDropTask }: 
           onDropTask(taskId, status);
         }}
       >
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onMove={onMove}
-          />
+                {tasks.map((task) => (
+          <TaskCard key={task.id} task={task} onOpen={onOpen} />
         ))}
+
       </div>
     </div>
   );

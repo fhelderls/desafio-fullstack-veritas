@@ -62,6 +62,7 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 12px;
+  cursor: pointer;
 }
 
 .task-card h4 {
@@ -72,20 +73,7 @@
 .task-card p {
   font-size: 13px;
   color: var(--text);
-  margin-bottom: 8px;
-}
-
-.task-card-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.task-card-actions button {
-  cursor: pointer;
-  font: inherit;
-  transition: background-color 0.15s, color 0.15s;
+  margin-bottom: 0;
 }
 
 .modal-overlay {
@@ -166,32 +154,6 @@
   border-radius: 6px;
 }
 
-.task-card-nav-btn {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: var(--bg-subtle);
-  color: var(--text-h);
-  font-size: 14px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.task-card-nav-btn:hover:not(:disabled) {
-  background: var(--accent);
-  color: #fff;
-}
-
-.task-card-nav-btn:disabled {
-  opacity: 0.25;
-  cursor: not-allowed;
-}
-
-.task-card-edit-btn,
 .task-card-delete-btn {
   border: none;
   border-radius: 6px;
@@ -199,22 +161,74 @@
   font-size: 12px;
   font-weight: 500;
   background: transparent;
-}
-
-.task-card-edit-btn {
-  color: var(--text);
-}
-
-.task-card-edit-btn:hover {
-  background: var(--bg-subtle);
-  color: var(--text-h);
-}
-
-.task-card-delete-btn {
   color: var(--danger);
 }
 
 .task-card-delete-btn:hover {
   background: var(--danger);
   color: #fff;
+}
+
+.status-menu {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.status-menu-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-subtle);
+  color: var(--text-h);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.status-menu-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 5;
+}
+
+.status-menu-list li + li {
+  margin-top: 2px;
+}
+
+.status-menu-list button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.status-menu-list button:hover:not(:disabled) {
+  background: var(--bg-subtle);
+}
+
+.status-menu-list button:disabled {
+  color: var(--text);
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .board {
+    flex-direction: column;
+  }
 }

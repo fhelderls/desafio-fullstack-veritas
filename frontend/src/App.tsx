@@ -4,8 +4,8 @@ import { STATUS_ORDER } from "./constants";
 import { fetchTasks, createTask, updateTask, deleteTask } from "./api";
 import { Column } from "./components/Column";
 import { TaskFormModal } from "./components/TaskFormModal";
+import { TaskDetailModal } from "./components/TaskDetailModal";
 import "./App.css";
-
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -13,6 +13,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
 
   const loadTasks = useCallback(async () => {
     try {
@@ -27,18 +28,26 @@ function App() {
     }
   }, []);
 
-     useEffect(() => {
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch inicial ao montar; sem lib de data-fetching no escopo do desafio
     loadTasks();
   }, [loadTasks]);
-
 
   function handleOpenCreate() {
     setEditingTask(null);
     setIsModalOpen(true);
   }
 
+  function handleOpenView(task: Task) {
+    setViewingTask(task);
+  }
+
+  function handleCloseView() {
+    setViewingTask(null);
+  }
+
   function handleOpenEdit(task: Task) {
+    setViewingTask(null);
     setEditingTask(task);
     setIsModalOpen(true);
   }
@@ -66,6 +75,7 @@ function App() {
   async function handleDelete(id: string) {
     try {
       await deleteTask(id);
+      setViewingTask(null);
       await loadTasks();
     } catch {
       setError("Não foi possível excluir a tarefa.");
@@ -80,7 +90,13 @@ function App() {
       setError("Não foi possível mover a tarefa.");
     }
   }
-    async function handleDropTask(taskId: string, newStatus: TaskStatus) {
+
+  async function handleChangeStatus(task: Task, newStatus: TaskStatus) {
+    await handleMove(task, newStatus);
+    setViewingTask(null);
+  }
+
+  async function handleDropTask(taskId: string, newStatus: TaskStatus) {
     const task = tasks.find((t) => t.id === taskId);
     if (!task || task.status === newStatus) return;
     await handleMove(task, newStatus);
@@ -98,30 +114,35 @@ function App() {
 
       <div className="board">
         {STATUS_ORDER.map((status) => (
-                    <Column
+          <Column
             key={status}
             status={status}
             tasks={tasks.filter((task) => task.status === status)}
-            onEdit={handleOpenEdit}
-            onDelete={handleDelete}
-            onMove={handleMove}
+            onOpen={handleOpenView}
             onDropTask={handleDropTask}
           />
-
         ))}
       </div>
 
-           {isModalOpen && (
+      {viewingTask && (
+        <TaskDetailModal
+          task={viewingTask}
+          onClose={handleCloseView}
+          onEdit={handleOpenEdit}
+          onDelete={handleDelete}
+          onChangeStatus={handleChangeStatus}
+        />
+      )}
+
+      {isModalOpen && (
         <TaskFormModal
           initialData={editingTask}
           onClose={handleCloseModal}
           onSave={handleSave}
         />
       )}
-
     </div>
   );
-   
 }
 
 export default App;
