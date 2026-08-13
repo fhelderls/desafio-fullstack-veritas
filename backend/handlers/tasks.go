@@ -4,6 +4,7 @@ import (
 	store "desafio-fullstack-veritas/store"
 	"encoding/json"
 	"net/http"
+	"time"
 )
 
 type TaskHandler struct {
@@ -18,6 +19,7 @@ type taskInput struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Status      string `json:"status"`
+	DueDate     string `json:"due_date"`
 }
 
 var validStatuses = map[string]bool{
@@ -28,6 +30,21 @@ var validStatuses = map[string]bool{
 
 func isValidStatus(status string) bool {
 	return validStatuses[status]
+}
+
+// dueDateLayout segue a data de referencia do pacote time do Go
+// (02/01/2006 = mes/dia/ano na notacao americana); aqui usamos so a
+// parte de data, no formato ISO "AAAA-MM-DD".
+const dueDateLayout = "2006-01-02"
+
+// isValidDueDate aceita string vazia (data de vencimento e opcional) ou
+// uma data valida no layout AAAA-MM-DD.
+func isValidDueDate(dueDate string) bool {
+	if dueDate == "" {
+		return true
+	}
+	_, err := time.Parse(dueDateLayout, dueDate)
+	return err == nil
 }
 
 func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +67,12 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task := h.store.Create(input.Title, input.Description, input.Status)
+	if !isValidDueDate(input.DueDate) {
+		http.Error(w, "Invalid due date", http.StatusBadRequest)
+		return
+	}
+
+	task := h.store.Create(input.Title, input.Description, input.Status, input.DueDate)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(task)
@@ -79,7 +101,12 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err := h.store.Update(id, input.Title, input.Description, input.Status)
+	if !isValidDueDate(input.DueDate) {
+		http.Error(w, "Invalid due date", http.StatusBadRequest)
+		return
+	}
+
+	task, err := h.store.Update(id, input.Title, input.Description, input.Status, input.DueDate)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

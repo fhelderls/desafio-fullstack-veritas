@@ -81,6 +81,20 @@ func TestCreateTaskInvalidStatus(t *testing.T) {
 	}
 }
 
+func TestCreateTaskInvalidDueDate(t *testing.T) {
+	h := newTestHandler(t)
+
+	body := bytes.NewBufferString(`{"title":"Tarefa","description":"desc","status":"todo","due_date":"20-08-2026"}`)
+	req := httptest.NewRequest(http.MethodPost, "/tasks", body)
+	rec := httptest.NewRecorder()
+
+	h.CreateTask(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("expected status 400 for invalid due date, got %d", rec.Code)
+	}
+}
+
 func TestListTasks(t *testing.T) {
 	h := newTestHandler(t)
 
