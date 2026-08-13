@@ -69,6 +69,10 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
+	if input.Title == "" {
+		http.Error(w, "Title is required", http.StatusBadRequest)
+		return
+	}
 
 	if !isValidStatus(input.Status) {
 		http.Error(w, "Invalid status", http.StatusBadRequest)
