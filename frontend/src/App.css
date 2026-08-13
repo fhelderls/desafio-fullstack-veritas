@@ -90,6 +90,14 @@
   opacity: 0.75;
 }
 
+.task-card p.task-card-assignee,
+.modal-content p.task-card-assignee {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--surface-text-h);
+}
+
 
 .modal-overlay {
   position: fixed;

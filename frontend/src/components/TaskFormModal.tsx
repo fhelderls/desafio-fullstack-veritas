@@ -1,23 +1,25 @@
 import { useState } from "react";
 import type { Task, TaskStatus } from "../types";
-import { STATUS_ORDER, STATUS_LABELS } from "../constants";
+import { STATUS_ORDER, STATUS_LABELS, ASSIGNEES } from "../constants";
+import { getTodayISO } from "../utils";
 
 interface TaskFormModalProps {
   initialData?: Task | null;
   onClose: () => void;
-  onSave: (title: string, description: string, status: TaskStatus, dueDate: string) => void;
+  onSave: (title: string, description: string, status: TaskStatus, dueDate: string, assignee: string) => void;
 }
 
 export function TaskFormModal({ initialData, onClose, onSave }: TaskFormModalProps) {
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [status, setStatus] = useState<TaskStatus>(initialData?.status ?? "todo");
-  const [dueDate, setDueDate] = useState(initialData?.due_date ?? "");
+  const [dueDate, setDueDate] = useState(initialData?.due_date || getTodayISO());
+  const [assignee, setAssignee] = useState(initialData?.assignee ?? "");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
-    onSave(title, description, status, dueDate);
+    onSave(title, description, status, dueDate, assignee);
   }
 
   return (
@@ -51,6 +53,21 @@ export function TaskFormModal({ initialData, onClose, onSave }: TaskFormModalPro
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
+          </label>
+          <label>
+            Responsável:
+            <select
+              value={assignee}
+              onChange={(e) => setAssignee(e.target.value)}
+              required
+            >
+              <option value="" disabled></option>
+              {ASSIGNEES.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
             Status:

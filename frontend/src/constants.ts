@@ -7,4 +7,7 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
   done: "Concluídas",
 };
 
-
+// ASSIGNEES e uma lista fixa de responsaveis de exemplo (nao ha cadastro de
+// usuarios no escopo deste desafio) - precisa bater com validAssignees em
+// backend/handlers/tasks.go.
+export const ASSIGNEES = ["Felipe", "Hellen"];

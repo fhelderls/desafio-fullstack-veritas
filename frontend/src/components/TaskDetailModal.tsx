@@ -30,6 +30,7 @@ export function TaskDetailModal({ task, onClose, onEdit, onDelete, onChangeStatu
         <h3>{task.title}</h3>
         {task.description && <p>{task.description}</p>}
         {task.due_date && <p className="task-card-due-date">Data limite: {formatDate(task.due_date)}</p>}
+        {task.assignee && <p className="task-card-assignee">{task.assignee}</p>}
 
         <div className="status-menu">
           <button

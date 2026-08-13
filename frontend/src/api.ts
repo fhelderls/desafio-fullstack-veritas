@@ -17,14 +17,15 @@ export async function fetchTasks(): Promise<Task[]> {
         title: string,
         description: string,
         status: TaskStatus,
-        dueDate: string
+        dueDate: string,
+        assignee: string
     ): Promise<Task> {
         const res = await fetch(`${API_BASE_URL}/tasks`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title, description, status, due_date: dueDate }),
+            body: JSON.stringify({ title, description, status, due_date: dueDate, assignee }),
         });
         if (!res.ok) {
             throw new Error("Falha ao criar tarefa");
@@ -37,14 +38,15 @@ export async function fetchTasks(): Promise<Task[]> {
         title: string,
         description: string,
         status: TaskStatus,
-        dueDate: string
+        dueDate: string,
+        assignee: string
     ): Promise<Task> {
         const res = await fetch(`${API_BASE_URL}/tasks/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ title, description, status, due_date: dueDate }),
+            body: JSON.stringify({ title, description, status, due_date: dueDate, assignee }),
         });
         if (!res.ok) {
             throw new Error("Falha ao atualizar tarefa");

@@ -9,3 +9,15 @@ export function formatDate(isoDate: string): string {
   const [year, month, day] = isoDate.split("-");
   return `${day}/${month}/${year}`;
 }
+
+// getTodayISO retorna a data de hoje no formato "AAAA-MM-DD", usando as
+// partes locais do Date (ano/mes/dia) em vez de toISOString() - toISOString
+// converte pra UTC, o que pode "voltar" um dia perto da meia-noite
+// dependendo do fuso horario do navegador.
+export function getTodayISO(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
