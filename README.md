@@ -89,9 +89,11 @@ Status aceitos: `todo`, `in_progress`, `done`.
 - Testes unitários do backend (store e handlers)
 - Dockerfile multi-stage + docker-compose pros dois serviços
 
-## Diagrama de fluxo
+## Diagramas
 
-[`docs/user-flow.png`](docs/user-flow.png)
+Fluxo de uso: [`docs/user-flow.png`](docs/user-flow.png)
+
+Fluxo de dados (requisição → handler → store → arquivo): [`docs/data-flow.png`](docs/data-flow.png)
 
 ## Decisões técnicas
 

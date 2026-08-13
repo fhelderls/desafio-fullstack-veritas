@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph Browser["Navegador"]
+        UI["React (App.tsx)"]
+    end
+
+    subgraph Server["Backend Go"]
+        Router["net/http ServeMux + CORS"]
+        Handler["handlers.TaskHandler"]
+        Store["store.TaskStore\n(RWMutex)"]
+        File["tasks.json"]
+    end
+
+    UI -- "fetch GET/POST/PUT/DELETE /tasks" --> Router
+    Router -- "roteia por metodo + path" --> Handler
+    Handler -- "valida titulo/status" --> Store
+    Store -- "Lock/RLock" --> Store
+    Store -- "grava a cada mutacao" --> File
+    File -- "carrega no boot" --> Store
+    Store -- "retorna []Task" --> Handler
+    Handler -- "json.Encode" --> Router
+    Router -- "resposta JSON" --> UI
+    UI -- "setTasks / re-render" --> UI
