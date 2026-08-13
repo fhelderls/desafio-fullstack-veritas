@@ -2,6 +2,9 @@
 
 Aplicação full-stack de gerenciamento de tarefas em formato Kanban. Backend em Go, frontend em React + TypeScript.
 
+![Board do Mini Kanban Veritas](docs/screenshot-board.png)
+![Modal de edição de tarefa](docs/screenshot-modal.png)
+
 ## Stack
 
 Backend: Go 1.26, `net/http` da biblioteca padrão (sem framework), `sync.RWMutex` pra proteger o armazenamento em memória contra acesso concorrente.
