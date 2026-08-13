@@ -1,3 +1,69 @@
+# Mini Kanban de Tarefas
+
+Aplicação full-stack de gerenciamento de tarefas em formato Kanban. Backend em Go, frontend em React + TypeScript.
+
+## Stack
+
+Backend: Go 1.26, `net/http` da biblioteca padrão (sem framework), `sync.RWMutex` pra proteger o armazenamento em memória contra acesso concorrente.
+
+Frontend: React 19, TypeScript, Vite, ESLint.
+
+## Estrutura do projeto
+
+```
+backend/
+  models/      definição da struct Task
+  store/       armazenamento em memória + persistência em JSON, CRUD thread-safe
+  handlers/    handlers HTTP, validação, JSON, status codes
+  main.go      rotas e CORS
+  Dockerfile   build multi-stage do backend
+
+frontend/
+  src/
+    components/  Column, TaskCard, TaskFormModal
+    api.ts       chamadas HTTP pro backend
+    types.ts     tipos TypeScript compartilhados
+    constants.ts STATUS_ORDER / STATUS_LABELS
+    App.tsx      estado global e orquestração da UI
+  Dockerfile     build multi-stage do frontend (assets estáticos + nginx)
+
+docker-compose.yml   sobe backend e frontend juntos
+```
+
+O backend ficou dividido em três pacotes em vez de um arquivo único porque cada camada não precisa saber como as outras funcionam: a struct não sabe como é guardada, o store não sabe como é exposto via HTTP, os handlers não sabem como os dados são armazenados por dentro. Fica mais fácil testar cada parte isolada e mexer numa sem quebrar a outra.
+
+## Como executar
+
+Backend:
+```
+cd backend
+go run main.go
+```
+Sobe em `http://localhost:3001`.
+
+Frontend:
+```
+cd frontend
+npm install
+npm run dev
+```
+Sobe em `http://localhost:5173`.
+
+O frontend depende do backend rodando. Sem ele, a tela mostra erro — é o comportamento esperado.
+
+Com Docker (backend + frontend juntos, build de produção):
+```
+docker compose up --build
+```
+Backend em `http://localhost:3001`, frontend em `http://localhost:8090`.
+
+## Testes
+
+Testes unitários do backend (store e handlers):
+```
+cd backend
+go test ./...
+```
 
 ## Endpoints
 
