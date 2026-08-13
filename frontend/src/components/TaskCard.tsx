@@ -1,4 +1,5 @@
 import type { Task } from "../types";
+import { formatDate } from "../utils";
 
 interface TaskCardProps {
   task: Task;
@@ -15,6 +16,7 @@ export function TaskCard({ task, onOpen }: TaskCardProps) {
     >
       <h4>{task.title}</h4>
       {task.description && <p>{task.description}</p>}
+      {task.due_date && <p className="task-card-due-date">Data limite: {formatDate(task.due_date)}</p>}
     </div>
   );
 }

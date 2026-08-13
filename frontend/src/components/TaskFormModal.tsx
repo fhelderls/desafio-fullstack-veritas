@@ -5,23 +5,27 @@ import { STATUS_ORDER, STATUS_LABELS } from "../constants";
 interface TaskFormModalProps {
   initialData?: Task | null;
   onClose: () => void;
-  onSave: (title: string, description: string, status: TaskStatus) => void;
+  onSave: (title: string, description: string, status: TaskStatus, dueDate: string) => void;
 }
 
 export function TaskFormModal({ initialData, onClose, onSave }: TaskFormModalProps) {
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [status, setStatus] = useState<TaskStatus>(initialData?.status ?? "todo");
+  const [dueDate, setDueDate] = useState(initialData?.due_date ?? "");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!title.trim()) return;
-    onSave(title, description, status);
+    onSave(title, description, status, dueDate);
   }
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
+        <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Fechar">
+          ×
+        </button>
         <h3>{initialData ? "Editar Tarefa" : "Nova Tarefa"}</h3>
         <form onSubmit={handleSubmit}>
           <label>
@@ -41,6 +45,14 @@ export function TaskFormModal({ initialData, onClose, onSave }: TaskFormModalPro
             />
           </label>
           <label>
+            Data de vencimento:
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </label>
+          <label>
             Status:
             <select
               value={status}
@@ -54,9 +66,6 @@ export function TaskFormModal({ initialData, onClose, onSave }: TaskFormModalPro
             </select>
           </label>
           <div className="modal-actions">
-            <button type="button" onClick={onClose}>
-              Cancelar
-            </button>
             <button type="submit">Salvar</button>
           </div>
         </form>

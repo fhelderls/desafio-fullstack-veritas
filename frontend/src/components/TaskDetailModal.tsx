@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Task, TaskStatus } from "../types";
 import { STATUS_ORDER, STATUS_LABELS } from "../constants";
+import { formatDate } from "../utils";
 
 interface TaskDetailModalProps {
   task: Task;
@@ -23,8 +24,12 @@ export function TaskDetailModal({ task, onClose, onEdit, onDelete, onChangeStatu
   return (
     <div className="modal-overlay">
       <div className="modal-content">
+        <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Fechar">
+          ×
+        </button>
         <h3>{task.title}</h3>
         {task.description && <p>{task.description}</p>}
+        {task.due_date && <p className="task-card-due-date">Data limite: {formatDate(task.due_date)}</p>}
 
         <div className="status-menu">
           <button
@@ -52,9 +57,6 @@ export function TaskDetailModal({ task, onClose, onEdit, onDelete, onChangeStatu
         </div>
 
         <div className="modal-actions">
-          <button type="button" onClick={onClose}>
-            Fechar
-          </button>
           <button type="button" onClick={() => onEdit(task)}>
             Editar
           </button>

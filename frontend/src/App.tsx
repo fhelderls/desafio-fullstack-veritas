@@ -58,12 +58,12 @@ function App() {
     setEditingTask(null);
   }
 
-  async function handleSave(title: string, description: string, status: TaskStatus) {
+  async function handleSave(title: string, description: string, status: TaskStatus, dueDate: string) {
     try {
       if (editingTask) {
-        await updateTask(editingTask.id, title, description, status);
+        await updateTask(editingTask.id, title, description, status, dueDate);
       } else {
-        await createTask(title, description, status);
+        await createTask(title, description, status, dueDate);
       }
       setIsModalOpen(false);
       setEditingTask(null);
@@ -85,7 +85,7 @@ function App() {
 
   async function handleMove(task: Task, newStatus: TaskStatus) {
     try {
-      await updateTask(task.id, task.title, task.description, newStatus);
+      await updateTask(task.id, task.title, task.description, newStatus, task.due_date);
       await loadTasks();
     } catch {
       setError("Não foi possível mover a tarefa.");
