@@ -17,7 +17,7 @@
 
 .app-header button {
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border: none;
   border-radius: 6px;
   padding: 10px 16px;
@@ -39,11 +39,14 @@
 .column {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   background: var(--bg-subtle);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
 }
+
+
 
 .column h3 {
   font-size: 16px;
@@ -57,8 +60,10 @@
   min-height: 40px;
 }
 
+
+
 .task-card {
-  background: var(--bg);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 12px;
@@ -68,13 +73,16 @@
 .task-card h4 {
   font-size: 15px;
   margin-bottom: 4px;
+  color: var(--surface-text-h);
 }
+
 
 .task-card p {
   font-size: 13px;
-  color: var(--text);
+  color: var(--surface-text);
   margin-bottom: 0;
 }
+
 
 .modal-overlay {
   position: fixed;
@@ -87,7 +95,7 @@
 }
 
 .modal-content {
-  background: var(--bg);
+  background: var(--surface);
   border-radius: 8px;
   padding: 24px;
   width: 100%;
@@ -135,7 +143,7 @@
 
 .modal-actions button[type="submit"] {
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border: none;
 }
 
@@ -230,8 +238,14 @@
 @media (max-width: 768px) {
   .board {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .column {
+        min-height: 0;
   }
 }
+
 .status-screen {
   min-height: 60vh;
   display: flex;
@@ -249,7 +263,7 @@
 
 .status-screen button {
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border: none;
   border-radius: 6px;
   padding: 10px 20px;
