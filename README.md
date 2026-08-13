@@ -1,4 +1,4 @@
-# Mini Kanban de Tarefas
+# Mini Kanban Veritas
 
 Aplicação full-stack de gerenciamento de tarefas em formato Kanban. Backend em Go, frontend em React + TypeScript.
 
