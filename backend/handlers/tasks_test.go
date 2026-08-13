@@ -34,7 +34,7 @@ func newTestHandler(t *testing.T) *TaskHandler {
 func TestCreateTask(t *testing.T) {
 	h := newTestHandler(t)
 
-	body := bytes.NewBufferString(`{"title":"Nova tarefa","description":"desc","status":"todo"}`)
+	body := bytes.NewBufferString(`{"title":"Nova tarefa","description":"desc","status":"todo","assignee":"Felipe"}`)
 	req := httptest.NewRequest(http.MethodPost, "/tasks", body)
 	rec := httptest.NewRecorder()
 
@@ -50,6 +50,20 @@ func TestCreateTask(t *testing.T) {
 	}
 	if task["title"] != "Nova tarefa" {
 		t.Errorf("expected title 'Nova tarefa', got %v", task["title"])
+	}
+}
+
+func TestCreateTaskMissingAssignee(t *testing.T) {
+	h := newTestHandler(t)
+
+	body := bytes.NewBufferString(`{"title":"Tarefa","description":"desc","status":"todo"}`)
+	req := httptest.NewRequest(http.MethodPost, "/tasks", body)
+	rec := httptest.NewRecorder()
+
+	h.CreateTask(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("expected status 400 for missing assignee, got %d", rec.Code)
 	}
 }
 
@@ -92,6 +106,20 @@ func TestCreateTaskInvalidDueDate(t *testing.T) {
 
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("expected status 400 for invalid due date, got %d", rec.Code)
+	}
+}
+
+func TestCreateTaskInvalidAssignee(t *testing.T) {
+	h := newTestHandler(t)
+
+	body := bytes.NewBufferString(`{"title":"Tarefa","description":"desc","status":"todo","assignee":"Zezinho"}`)
+	req := httptest.NewRequest(http.MethodPost, "/tasks", body)
+	rec := httptest.NewRecorder()
+
+	h.CreateTask(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("expected status 400 for invalid assignee, got %d", rec.Code)
 	}
 }
 

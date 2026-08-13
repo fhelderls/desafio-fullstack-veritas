@@ -30,7 +30,7 @@ func setupTestStore(t *testing.T) *TaskStore {
 func TestCreate(t *testing.T) {
 	s := setupTestStore(t)
 
-	task := s.Create("Titulo", "Descricao", "todo", "2026-08-20")
+	task := s.Create("Titulo", "Descricao", "todo", "2026-08-20", "Felipe")
 
 	if task.ID == "" {
 		t.Error("expected a non-empty ID")
@@ -41,6 +41,9 @@ func TestCreate(t *testing.T) {
 	if task.DueDate != "2026-08-20" {
 		t.Errorf("expected due date '2026-08-20', got %q", task.DueDate)
 	}
+	if task.Assignee != "Felipe" {
+		t.Errorf("expected assignee 'Felipe', got %q", task.Assignee)
+	}
 
 	all := s.GetAllTasks()
 	if len(all) != 1 {
@@ -50,13 +53,13 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	s := setupTestStore(t)
-	task := s.Create("Original", "desc", "todo", "")
+	task := s.Create("Original", "desc", "todo", "", "")
 
-	updated, err := s.Update(task.ID, "Atualizado", "nova desc", "in_progress", "2026-09-01")
+	updated, err := s.Update(task.ID, "Atualizado", "nova desc", "in_progress", "2026-09-01", "Hellen")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if updated.Title != "Atualizado" || updated.Status != "in_progress" || updated.DueDate != "2026-09-01" {
+	if updated.Title != "Atualizado" || updated.Status != "in_progress" || updated.DueDate != "2026-09-01" || updated.Assignee != "Hellen" {
 		t.Errorf("update did not apply correctly: %+v", updated)
 	}
 }
@@ -64,7 +67,7 @@ func TestUpdate(t *testing.T) {
 func TestUpdateNotFound(t *testing.T) {
 	s := setupTestStore(t)
 
-	_, err := s.Update("id-inexistente", "x", "y", "todo", "")
+	_, err := s.Update("id-inexistente", "x", "y", "todo", "", "")
 	if err == nil {
 		t.Error("expected an error for a non-existent id, got nil")
 	}
@@ -72,7 +75,7 @@ func TestUpdateNotFound(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	s := setupTestStore(t)
-	task := s.Create("Para deletar", "desc", "todo", "")
+	task := s.Create("Para deletar", "desc", "todo", "", "")
 
 	if err := s.Delete(task.ID); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -94,7 +97,7 @@ func TestDeleteNotFound(t *testing.T) {
 
 func TestPersistsAcrossRestart(t *testing.T) {
 	s := setupTestStore(t)
-	s.Create("Sobrevive", "desc", "todo", "")
+	s.Create("Sobrevive", "desc", "todo", "", "")
 
 	// simula um restart: cria um novo TaskStore no mesmo diretorio de teste
 	reloaded := NewTaskStore()

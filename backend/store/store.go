@@ -81,7 +81,7 @@ func (s *TaskStore) GetAllTasks() []models.Task {
 }
 
 // Create adiciona uma nova task com ID sequencial gerado internamente.
-func (s *TaskStore) Create(title, description, status, dueDate string) models.Task {
+func (s *TaskStore) Create(title, description, status, dueDate, assignee string) models.Task {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.nextID++
@@ -92,16 +92,17 @@ func (s *TaskStore) Create(title, description, status, dueDate string) models.Ta
 		Description: description,
 		Status:      status,
 		DueDate:     dueDate,
+		Assignee:    assignee,
 	}
 	s.tasks[id] = task
 	s.save()
 	return task
 }
 
-// Update sobrescreve título, descrição, status e data de vencimento de uma
-// task existente. É o mesmo método usado para mover uma task entre colunas
-// do Kanban, já que mover é apenas uma mudança de Status.
-func (s *TaskStore) Update(id, title, description, status, dueDate string) (models.Task, error) {
+// Update sobrescreve título, descrição, status, data de vencimento e
+// responsável de uma task existente. É o mesmo método usado para mover uma
+// task entre colunas do Kanban, já que mover é apenas uma mudança de Status.
+func (s *TaskStore) Update(id, title, description, status, dueDate, assignee string) (models.Task, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -114,6 +115,7 @@ func (s *TaskStore) Update(id, title, description, status, dueDate string) (mode
 	task.Description = description
 	task.Status = status
 	task.DueDate = dueDate
+	task.Assignee = assignee
 	s.tasks[id] = task
 	s.save()
 	return task, nil

@@ -20,6 +20,7 @@ type taskInput struct {
 	Description string `json:"description"`
 	Status      string `json:"status"`
 	DueDate     string `json:"due_date"`
+	Assignee    string `json:"assignee"`
 }
 
 var validStatuses = map[string]bool{
@@ -47,6 +48,18 @@ func isValidDueDate(dueDate string) bool {
 	return err == nil
 }
 
+// validAssignees e uma lista fixa de responsaveis de exemplo (nao ha
+// cadastro de usuarios no escopo deste desafio). Atribuicao e obrigatoria -
+// toda task precisa ter um responsavel.
+var validAssignees = map[string]bool{
+	"Felipe": true,
+	"Hellen": true,
+}
+
+func isValidAssignee(assignee string) bool {
+	return validAssignees[assignee]
+}
+
 func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var input taskInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -72,7 +85,17 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task := h.store.Create(input.Title, input.Description, input.Status, input.DueDate)
+	if input.Assignee == "" {
+		http.Error(w, "Assignee is required", http.StatusBadRequest)
+		return
+	}
+
+	if !isValidAssignee(input.Assignee) {
+		http.Error(w, "Invalid assignee", http.StatusBadRequest)
+		return
+	}
+
+	task := h.store.Create(input.Title, input.Description, input.Status, input.DueDate, input.Assignee)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(task)
@@ -106,7 +129,17 @@ func (h *TaskHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err := h.store.Update(id, input.Title, input.Description, input.Status, input.DueDate)
+	if input.Assignee == "" {
+		http.Error(w, "Assignee is required", http.StatusBadRequest)
+		return
+	}
+
+	if !isValidAssignee(input.Assignee) {
+		http.Error(w, "Invalid assignee", http.StatusBadRequest)
+		return
+	}
+
+	task, err := h.store.Update(id, input.Title, input.Description, input.Status, input.DueDate, input.Assignee)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
