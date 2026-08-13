@@ -15,18 +15,19 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [viewingTask, setViewingTask] = useState<Task | null>(null);
 
-  const loadTasks = useCallback(async () => {
+    const loadTasks = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
       const data = await fetchTasks();
       setTasks(data);
+      setError(null);
     } catch {
       setError("Não foi possível carregar as tarefas. Verifique se o backend está rodando.");
     } finally {
       setLoading(false);
     }
   }, []);
+
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch inicial ao montar; sem lib de data-fetching no escopo do desafio
@@ -101,16 +102,35 @@ function App() {
     if (!task || task.status === newStatus) return;
     await handleMove(task, newStatus);
   }
+      if (loading) {
+    return (
+      <div className="app">
+        <div className="status-screen">
+          <h1>Mini Kanban Veritas</h1>
+          <p>Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app">
+        <div className="status-screen">
+          <h1>Mini Kanban Veritas</h1>
+          <p className="error-text">{error}</p>
+          <button onClick={loadTasks}>Tentar novamente</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Mini Kanban</h1>
+        <h1>Mini Kanban Veritas</h1>
         <button onClick={handleOpenCreate}>+ Nova Tarefa</button>
       </header>
-
-      {loading && <p>Carregando...</p>}
-      {error && <p className="error">{error}</p>}
 
       <div className="board">
         {STATUS_ORDER.map((status) => (

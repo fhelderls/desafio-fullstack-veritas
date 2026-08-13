@@ -232,3 +232,29 @@
     flex-direction: column;
   }
 }
+.status-screen {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.status-screen .error-text {
+  color: var(--danger);
+  max-width: 40ch;
+}
+
+.status-screen button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
